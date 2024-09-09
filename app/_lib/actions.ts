@@ -11,6 +11,8 @@ import bookingSchema from "../_schemas/bookingValidation";
 import { ZodError } from "zod";
 import stripe from "../_utils/stripe-server";
 
+const baseURL = process.env.BASE_URL!;
+
 const isGuestAuhtenticated = async () => {
   const session = await auth();
   if (!session) throw new Error("Yout must be logged in");
@@ -70,8 +72,8 @@ export const createCheckoutSession = async (
       ],
       mode: "payment",
       //http://localhost:3000/cabins/153
-      success_url: `http://localhost:3000/account/reservations`,
-      cancel_url: `http://localhost:3000/`,
+      success_url: `${baseURL}/account/reservations`,
+      cancel_url: `${baseURL}/`,
       payment_intent_data: {
         metadata: {
           ...newBookingData,
