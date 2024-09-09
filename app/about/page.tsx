@@ -5,7 +5,7 @@ import React from "react";
 import img_about_1 from "@/public/about-1.jpg";
 import img_about_2 from "@/public/about-2.jpg";
 import { getCabins } from "../_lib/data-service";
-import { Cabins } from "../_utils/types";
+import { Cabin } from "../_types/components.type";
 
 export const revalidate = 5;
 
@@ -16,7 +16,7 @@ export const metadata = {
 type Props = {};
 
 const page = async (props: Props) => {
-  const cabins: Array<Cabins> = await getCabins();
+  const cabins: Array<Cabin> = await getCabins();
   return (
     <div className="grid grid-cols-5 gap-x-24 gap-y-32 text-lg items-center">
       <div className="col-span-3">
