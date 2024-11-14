@@ -1,7 +1,7 @@
 import { eachDayOfInterval } from "date-fns";
 import supabase from "./supabase";
 import { notFound } from "next/navigation";
-import { NewGuest } from "../_types/data-service.type";
+import { Country, NewGuest } from "../_types/data-service.type";
 import { Booking } from "../_types/components.type";
 
 /////////////
@@ -87,7 +87,7 @@ export async function getBookings(guestId: number): Promise<Booking[]> {
     .from("bookings")
     // We actually also need data on the cabins as well. But let's ONLY take the data that we actually need, in order to reduce downloaded data.
     .select(
-      "id, created_at, startDate, endDate, numNights, numGuests, totalPrice, guestId, status, cabinId, cabins(name, image)"
+      "id, created_at, startDate, endDate, numNights, numGuests, totalPrice, guestId, status, cabinId, cabins(name, image)",
     )
     .eq("guestId", guestId)
     .order("startDate");
@@ -147,10 +147,10 @@ export async function getSettings() {
 export async function getCountries() {
   try {
     const res = await fetch(
-      "https://restcountries.com/v2/all?fields=name,flag"
+      "https://restcountries.com/v2/all?fields=name,flag",
     );
     const countries = await res.json();
-    return countries;
+    return countries as Country[];
   } catch {
     throw new Error("Could not fetch countries");
   }

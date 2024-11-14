@@ -17,11 +17,11 @@ const DeleteReservation: React.FC<Props> = ({ bookingId, onDelete }) => {
   return (
     <button
       onClick={deleteReservationHandler}
-      className="group flex items-center gap-2 uppercase text-xs font-bold text-primary-300 flex-grow px-3 hover:bg-accent-600 transition-colors hover:text-primary-900"
+      className="group flex flex-grow items-center gap-2 px-3 text-xs font-bold uppercase text-primary-300 transition-colors hover:bg-accent-600 hover:text-primary-900"
     >
       {!pending ? (
         <>
-          <TrashIcon className="h-5 w-5 text-primary-600 group-hover:text-primary-800 transition-colors" />
+          <TrashIcon className="h-5 w-5 text-primary-600 transition-colors group-hover:text-primary-800" />
           <span className="mt-1">Delete</span>
         </>
       ) : (

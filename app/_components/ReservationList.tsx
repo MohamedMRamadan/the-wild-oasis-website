@@ -13,11 +13,11 @@ const ReservationList: FC<Props> = ({ bookings }) => {
     bookings,
     (currBooking, bookingId: number): Booking[] => {
       return currBooking.filter((booking) => booking.id !== bookingId);
-    }
+    },
   );
   const sortedOptimsticBookings = optimisticBookings.sort(
     (a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
   );
 
   const deleteHandler = async (bookingId: number) => {

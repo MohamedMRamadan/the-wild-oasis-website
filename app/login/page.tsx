@@ -1,7 +1,6 @@
 import React from "react";
 import SignInButton from "../_components/SignInButton";
 
-type Props = {};
 export const metadata = {
   title: "Login",
   description: "Login to access your guest area at The Wild Oasis",
@@ -11,9 +10,9 @@ export const metadata = {
   siteName: "The Wild Oasis",
 };
 
-const page = (props: Props) => {
+const page = () => {
   return (
-    <div className="flex flex-col gap-10 mt-10 items-center">
+    <div className="mt-10 flex flex-col items-center gap-10">
       <h2 className="text-3xl font-semibold">
         Sign in to access your guest area
       </h2>

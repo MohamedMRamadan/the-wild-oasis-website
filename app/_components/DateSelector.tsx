@@ -1,5 +1,6 @@
 "use client";
 import {
+  addDays,
   differenceInDays,
   isPast,
   isSameDay,
@@ -13,13 +14,13 @@ import { useReservationContext } from "./ReservationContext";
 
 function isAlreadyBooked(
   range: DateRange | undefined,
-  datesArr: Date[]
+  datesArr: Date[],
 ): boolean {
   return (
     range?.from !== undefined &&
     range?.to !== undefined &&
     datesArr.some((date) =>
-      isWithinInterval(date, { start: range.from!, end: range.to! })
+      isWithinInterval(date, { start: range.from!, end: range.to! }),
     )
   );
 }
@@ -38,10 +39,14 @@ const DateSelector: FC<Props> = ({ settings, cabin, bookedDates }) => {
   //   ? { from: undefined, to: undefined }
   //   : range;
 
-  const numNights = differenceInDays(range!.to!, range!.from!);
+  let numNights, cabinPrice;
 
-  const selectHandler = (selectedrange: any) => {
-    if (!!selectedrange.from && !!selectedrange.to) {
+  if (range?.to && range.from) {
+    numNights = differenceInDays(range.to, range.from);
+    cabinPrice = numNights * (regularPrice - discount);
+  }
+  const selectHandler = (selectedrange: DateRange | undefined) => {
+    if (!!selectedrange?.from && !!selectedrange?.to) {
       if (isAlreadyBooked(selectedrange, bookedDates)) {
         resetRange();
       } else {
@@ -49,37 +54,49 @@ const DateSelector: FC<Props> = ({ settings, cabin, bookedDates }) => {
       }
     } else setRange(selectedrange);
   };
-  const cabinPrice = numNights * (regularPrice - discount);
 
   return (
     <div className="flex flex-col justify-between">
       <DayPicker
-        className="pt-12 place-self-center"
+        className="place-self-center pt-12"
         mode="range"
         onSelect={selectHandler}
         selected={range}
-        min={minBookingLength + 1}
+        min={minBookingLength}
         max={maxBookingLength}
-        fromMonth={new Date()}
-        fromDate={new Date()}
-        toYear={new Date().getFullYear() + 5}
+        startMonth={new Date()}
+        hidden={[{ before: new Date() }]}
+        endMonth={new Date(new Date().getFullYear() + 5, 11)}
         captionLayout="dropdown"
         numberOfMonths={2}
+        modifiers={{
+          withinRange: { from: range?.from, to: range?.to },
+        }}
+        modifiersClassNames={{
+          withinRange: "rdp-day_inRange",
+        }}
         disabled={(currDate) => {
+          const isFromDate = currDate.getTime() === range?.from?.getTime();
           return (
             isPast(currDate) ||
-            bookedDates.some((date) => isSameDay(date, currDate))
+            bookedDates.some((date) => isSameDay(date, currDate)) ||
+            (!!range?.from &&
+              !isFromDate &&
+              !(
+                currDate >= addDays(range.from, 3) &&
+                currDate <= addDays(range.from, 7)
+              ))
           );
         }}
       />
 
-      <div className="flex items-center justify-between px-8 bg-accent-500 text-primary-800 h-[72px]">
+      <div className="flex h-[72px] items-center justify-between bg-accent-500 px-8 text-primary-800">
         <div className="flex items-baseline gap-6">
-          <p className="flex gap-2 items-baseline">
+          <p className="flex items-baseline gap-2">
             {discount > 0 ? (
               <>
                 <span className="text-2xl">${regularPrice - discount}</span>
-                <span className="line-through font-semibold text-primary-700">
+                <span className="font-semibold text-primary-700 line-through">
                   ${regularPrice}
                 </span>
               </>
@@ -103,7 +120,7 @@ const DateSelector: FC<Props> = ({ settings, cabin, bookedDates }) => {
 
         {range?.from || range?.to ? (
           <button
-            className="border border-primary-800 py-2 px-4 text-sm font-semibold"
+            className="border border-primary-800 px-4 py-2 text-sm font-semibold"
             onClick={() => resetRange()}
           >
             Clear
@@ -115,3 +132,23 @@ const DateSelector: FC<Props> = ({ settings, cabin, bookedDates }) => {
 };
 
 export default DateSelector;
+
+// <DayPicker
+// className="place-self-center pt-12"
+// mode="range"
+// onSelect={selectHandler}
+// selected={range}
+// min={minBookingLength + 1}
+// max={maxBookingLength + 1}
+// fromMonth={new Date()}
+// fromDate={new Date()}
+// toYear={new Date().getFullYear() + 5}
+// captionLayout="dropdown"
+// numberOfMonths={2}
+// disabled={(currDate) => {
+//   return (
+//     isPast(currDate) ||
+//     bookedDates.some((date) => isSameDay(date, currDate))
+//   );
+// }}
+// />

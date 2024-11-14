@@ -37,7 +37,7 @@ export const useReservationContext = () => {
   const ctx = useContext(ReservationContext);
   if (!ctx)
     throw new Error(
-      "useReservationContext must be used within a ReservationProvider"
+      "useReservationContext must be used within a ReservationProvider",
     );
   return ctx;
 };

@@ -1,7 +1,6 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { ExtendedSession } from "../_types/auth.types";
 import { auth, signIn, signOut } from "./auth";
 import supabase from "./supabase";
 import { getBooking, getSettings } from "./data-service";
@@ -10,13 +9,14 @@ import { redirect } from "next/navigation";
 import bookingSchema from "../_schemas/bookingValidation";
 import { ZodError } from "zod";
 import stripe from "../_utils/stripe-server";
+import { Session } from "next-auth";
 
 const baseURL = process.env.BASE_URL!;
 
 const isGuestAuhtenticated = async () => {
   const session = await auth();
   if (!session) throw new Error("Yout must be logged in");
-  else return session as ExtendedSession;
+  else return session;
 };
 const createBookingData = async (bookingData: any, formData: FormData) => {
   if (!bookingData.startDate || !bookingData.endDate)
@@ -24,8 +24,12 @@ const createBookingData = async (bookingData: any, formData: FormData) => {
   const session = await isGuestAuhtenticated();
   const settings = await getSettings();
 
-  const { numGuests, observations, hasBreakfast, image, payment } =
-    Object.fromEntries(formData.entries());
+  console.log(bookingData.startDate);
+  console.log(bookingData.endDate);
+
+  const { numGuests, observations, hasBreakfast } = Object.fromEntries(
+    formData.entries(),
+  );
 
   const newBookingData = {
     ...bookingData,
@@ -46,14 +50,18 @@ const createBookingData = async (bookingData: any, formData: FormData) => {
     newBookingData.extrasPrice = 0;
     newBookingData.totalPrice = bookingData.cabinPrice;
   }
+  console.log(newBookingData);
+  bookingSchema.parse(newBookingData);
   return newBookingData;
 };
 export const createCheckoutSession = async (
   image: string,
   bookingData: any,
-  formData: FormData
+  formData: FormData,
 ) => {
   const newBookingData = await createBookingData(bookingData, formData);
+  console.log(newBookingData);
+
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -88,10 +96,13 @@ export const createCheckoutSession = async (
 };
 
 export const createBooking = async (bookingData: any, formData: FormData) => {
-  const newBookingData = await createBookingData(bookingData, formData);
+  let newBookingData;
   try {
-    bookingSchema.parse(newBookingData);
+    newBookingData = await createBookingData(bookingData, formData);
+    // console.log(newBookingData.startDate);
+    // return;
     const { error } = await supabase.from("bookings").insert([newBookingData]);
+
     if (error) throw new Error("Booking could not be created");
   } catch (error: unknown) {
     if (error instanceof ZodError) {
@@ -101,12 +112,13 @@ export const createBooking = async (bookingData: any, formData: FormData) => {
       throw new Error(errors);
     } else throw new Error((error as string) || "Un expected error occuered!");
   }
+  revalidatePath(`/cabins/${newBookingData.cabinId}`);
   revalidatePath("/account/reservations");
   redirect("/account/reservations");
 };
 
 export const deleteBooking = async (bookingId: number) => {
-  const session = (await auth()) as ExtendedSession;
+  const session = await auth();
   if (!session) throw new Error("Yout must be logged in");
 
   const booking = await getBooking(bookingId);
@@ -119,6 +131,8 @@ export const deleteBooking = async (bookingId: number) => {
     .eq("id", bookingId);
 
   if (error) throw new Error("Booking could not be deleted");
+  // TODO
+  // revalidatePath(`/cabins/${newBookingData.cabinId}`);
   revalidatePath("/account/reservations");
 };
 export const updateBooking = async (formData: FormData) => {
@@ -128,7 +142,7 @@ export const updateBooking = async (formData: FormData) => {
 
   const booking = (await getBooking(bookingId)) as Booking;
   const settings = await getSettings();
-  const session = (await auth()) as ExtendedSession;
+  const session = (await auth()) as Session;
 
   if (session.user.guestId !== booking.guestId)
     throw new Error("you are not allowed to update this reservation");
@@ -164,7 +178,7 @@ export const updateBooking = async (formData: FormData) => {
   redirect("/account/reservations");
 };
 export async function updateProfile(formData: FormData) {
-  const session = (await auth()) as ExtendedSession;
+  const session = await auth();
   // as they will be catched by the closest error bounday(error.ts)
   // we can create local error boundary located at the folder route (ex: inside profile/ or account/)
   if (!session) throw new Error("Yout must be logged in");

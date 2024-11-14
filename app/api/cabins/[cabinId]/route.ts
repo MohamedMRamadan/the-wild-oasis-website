@@ -8,8 +8,8 @@ export async function GET(_: req, { params }: { params: { cabinId: string } }) {
       getCabin(cabinId),
       getBookedDatesByCabinId(cabinId),
     ]);
-    return Response.json({ cabin, bookedDates });
+    return res.json({ cabin, bookedDates }, { status: 200 });
   } catch (err) {
-    return res.json({ message: "Cabin not found" });
+    return res.json({ message: "Cabin not found" }, { status: 404 });
   }
 }

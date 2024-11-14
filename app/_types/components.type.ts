@@ -1,3 +1,7 @@
+import { Metadata } from "next";
+
+export type GenerateMetadataType<T> = (Object: T) => Promise<Metadata>;
+
 export interface Cabin {
   id: string;
   name: string;

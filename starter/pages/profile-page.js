@@ -7,21 +7,21 @@ export default function Page() {
 
   return (
     <div>
-      <h2 className="font-semibold text-2xl text-accent-400 mb-4">
+      <h2 className="mb-4 text-2xl font-semibold text-accent-400">
         Update your guest profile
       </h2>
 
-      <p className="text-lg mb-8 text-primary-200">
+      <p className="mb-8 text-lg text-primary-200">
         Providing the following information will make your check-in process
         faster and smoother. See you soon!
       </p>
 
-      <form className="bg-primary-900 py-8 px-12 text-lg flex gap-6 flex-col">
+      <form className="flex flex-col gap-6 bg-primary-900 px-12 py-8 text-lg">
         <div className="space-y-2">
           <label>Full name</label>
           <input
             disabled
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400"
+            className="w-full rounded-sm bg-primary-200 px-5 py-3 text-primary-800 shadow-sm disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400"
           />
         </div>
 
@@ -29,7 +29,7 @@ export default function Page() {
           <label>Email address</label>
           <input
             disabled
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400"
+            className="w-full rounded-sm bg-primary-200 px-5 py-3 text-primary-800 shadow-sm disabled:cursor-not-allowed disabled:bg-gray-600 disabled:text-gray-400"
           />
         </div>
 
@@ -46,7 +46,7 @@ export default function Page() {
           <SelectCountry
             name="nationality"
             id="nationality"
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+            className="w-full rounded-sm bg-primary-200 px-5 py-3 text-primary-800 shadow-sm"
             defaultCountry={nationality}
           />
         </div>
@@ -55,12 +55,12 @@ export default function Page() {
           <label htmlFor="nationalID">National ID number</label>
           <input
             name="nationalID"
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+            className="w-full rounded-sm bg-primary-200 px-5 py-3 text-primary-800 shadow-sm"
           />
         </div>
 
-        <div className="flex justify-end items-center gap-6">
-          <button className="bg-accent-500 px-8 py-4 text-primary-800 font-semibold hover:bg-accent-600 transition-all disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
+        <div className="flex items-center justify-end gap-6">
+          <button className="bg-accent-500 px-8 py-4 font-semibold text-primary-800 transition-all hover:bg-accent-600 disabled:cursor-not-allowed disabled:bg-gray-500 disabled:text-gray-300">
             Update profile
           </button>
         </div>

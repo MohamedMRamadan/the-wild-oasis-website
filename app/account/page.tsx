@@ -4,14 +4,13 @@ export const metadata = {
   title: "Guest area",
 };
 
-type Props = {};
-
-const page = async (props: Props) => {
+const page = async () => {
   const session = await auth();
   const firstName = session?.user?.name?.split(" ")[0] ?? "";
   return (
-    <h2 className="font-semibold text-2xl text-accent-400 mb-7">
+    <h2 className="mb-7 text-2xl font-semibold text-accent-400">
       Welcome {firstName}
+      Welcome
     </h2>
   );
 };

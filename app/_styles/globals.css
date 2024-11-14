@@ -29,11 +29,37 @@
     }
   }
 }
+@layer utilities {
+  .border-linear-primary {
+    @apply rounded-lg border-4 border-b-0 border-solid;
+    border-image: linear-gradient(
+        90deg,
+        theme("colors.accent.500"),
+        theme("colors.primary.800")
+      )
+      1;
+    border-radius: 8px; /* Optional: rounded corners */
+  }
+}
 
 /* For data picker */
-.rdp {
-  --rdp-cell-size: 32px !important;
+.rdp-root {
+  /* --rdp-cell-size: 32px !important; */
+  --rdp-day-height: 32px !important;
+  --rdp-day-width: 32px !important;
   --rdp-accent-color: theme("colors.accent.500") !important;
   --rdp-background-color: theme("colors.accent.600") !important;
+  --rdp-range_start-date-background-color: theme("colors.white") !important;
+  --rdp-range_start-color: theme("colors.accent.500") !important;
+  --rdp-range_start-date-background-color: theme("colors.white") !important;
+  --rdp-range_end-color: theme("colors.accent.500") !important;
+  --rdp-range_end-date-background-color: theme("colors.white") !important;
+  --rdp-range_middle-background-color: theme("colors.accent.600") !important;
   margin: 0 !important;
+}
+.rdp-day_inRange {
+  opacity: 1 !important;
+}
+.rdp-nav {
+  right: -22px !important;
 }

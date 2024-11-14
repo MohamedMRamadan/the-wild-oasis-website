@@ -1,7 +1,7 @@
 // import { NextRequest, NextResponse } from "next/server";
 
 // export const middleware = (req: NextRequest) => {
-//   return NextResponse.redirect(new URL("/about", req.url));
+//   return NextResponse.redirect(new URL("/account", req.url));
 // };
 
 export { auth as middleware } from "./app/_lib/auth";

@@ -1,8 +1,8 @@
 export default function Page() {
   return (
-    <div className="grid grid-cols-5 gap-x-24 gap-y-32 text-lg items-center">
+    <div className="grid grid-cols-5 items-center gap-x-24 gap-y-32 text-lg">
       <div className="col-span-3">
-        <h1 className="text-4xl mb-10 text-accent-400 font-medium">
+        <h1 className="mb-10 text-4xl font-medium text-accent-400">
           Welcome to The Wild Oasis
         </h1>
 
@@ -40,7 +40,7 @@ export default function Page() {
       </div>
 
       <div className="col-span-3">
-        <h1 className="text-4xl mb-10 text-accent-400 font-medium">
+        <h1 className="mb-10 text-4xl font-medium text-accent-400">
           Managed by our family since 1962
         </h1>
 
@@ -63,7 +63,7 @@ export default function Page() {
           <div>
             <a
               href="/cabins"
-              className="inline-block mt-4 bg-accent-500 px-8 py-5 text-primary-800 text-lg font-semibold hover:bg-accent-600 transition-all"
+              className="mt-4 inline-block bg-accent-500 px-8 py-5 text-lg font-semibold text-primary-800 transition-all hover:bg-accent-600"
             >
               Explore our luxury cabins
             </a>

@@ -5,7 +5,7 @@ import React from "react";
 import img_about_1 from "@/public/about-1.jpg";
 import img_about_2 from "@/public/about-2.jpg";
 import { getCabins } from "../_lib/data-service";
-import { Cabin } from "../_types/components.type";
+// import { Cabin } from "../_types/components.type";
 
 export const revalidate = 5;
 
@@ -13,14 +13,12 @@ export const metadata = {
   title: "About",
 };
 
-type Props = {};
-
-const page = async (props: Props) => {
-  const cabins: Array<Cabin> = await getCabins();
+const page = async () => {
+  const cabins = await getCabins();
   return (
-    <div className="grid grid-cols-5 gap-x-24 gap-y-32 text-lg items-center">
+    <div className="grid grid-cols-5 items-center gap-x-24 gap-y-32 text-lg">
       <div className="col-span-3">
-        <h1 className="text-4xl mb-10 text-accent-400 font-medium">
+        <h1 className="mb-10 text-4xl font-medium text-accent-400">
           Welcome to The Wild Oasis
         </h1>
 
@@ -60,7 +58,7 @@ const page = async (props: Props) => {
       </div>
 
       <div className="col-span-3">
-        <h1 className="text-4xl mb-10 text-accent-400 font-medium">
+        <h1 className="mb-10 text-4xl font-medium text-accent-400">
           Managed by our family since 1962
         </h1>
 
@@ -83,7 +81,7 @@ const page = async (props: Props) => {
           <div>
             <Link
               href="/cabins"
-              className="inline-block mt-4 bg-accent-500 px-8 py-5 text-primary-800 text-lg font-semibold hover:bg-accent-600 transition-all"
+              className="mt-4 inline-block bg-accent-500 px-8 py-5 text-lg font-semibold text-primary-800 transition-all hover:bg-accent-600"
             >
               Explore our luxury cabins
             </Link>

@@ -1,18 +1,17 @@
 "use client";
-import { differenceInDays } from "date-fns";
-import { Session } from "next-auth";
-import { useRouter } from "next/navigation";
+import { BanknotesIcon, CreditCardIcon } from "@heroicons/react/24/solid";
+import { loadStripe, Stripe } from "@stripe/stripe-js";
+import { differenceInDays, formatISO } from "date-fns";
 import { FC, useState } from "react";
 import toast from "react-hot-toast";
 import { createBooking, createCheckoutSession } from "../_lib/actions";
 import { Cabin, Settings } from "../_types/components.type";
 import { useReservationContext } from "./ReservationContext";
 import SubmitButton from "./SubmitButton";
-import { BanknotesIcon, CreditCardIcon } from "@heroicons/react/24/solid";
-import { loadStripe, Stripe } from "@stripe/stripe-js";
+import { format } from "date-fns";
 
 const stripePromise: Promise<Stripe | null> = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
 );
 
 const paymentMethods = [
@@ -30,17 +29,16 @@ const paymentMethods = [
 
 type Props = {
   cabin: Cabin;
-  session: Session;
   settings: Settings;
 };
 
-const ReservationForm: FC<Props> = ({ cabin, session: { user }, settings }) => {
+const ReservationForm: FC<Props> = ({ cabin, settings }) => {
   // CHANGE
   const { maxCapacity, regularPrice, discount, id: cabinId, image } = cabin;
   const [numGuests, setNumGuest] = useState(0);
   const { range, resetRange } = useReservationContext();
   const [paymentOption, setPaymentOption] = useState("");
-  const router = useRouter();
+  // const router = useRouter();
 
   const startDate = range?.from;
   const endDate = range?.to;
@@ -49,10 +47,13 @@ const ReservationForm: FC<Props> = ({ cabin, session: { user }, settings }) => {
     startDate && endDate ? differenceInDays(endDate, startDate) : 0;
   const cabinPrice = numNights * (regularPrice - discount);
 
-  const isRanged = !(!startDate || !endDate);
+  const isRanged = !!(startDate && endDate);
+
   const bookingData = {
-    startDate,
-    endDate,
+    startDate: startDate
+      ? format(startDate, "yyyy-MM-dd'T'HH:mm:ss")
+      : undefined,
+    endDate: endDate ? format(endDate, "yyyy-MM-dd'T'HH:mm:ss") : undefined,
     numNights,
     cabinPrice,
     cabinId,
@@ -61,38 +62,39 @@ const ReservationForm: FC<Props> = ({ cabin, session: { user }, settings }) => {
   const totalPrice = cabinPrice + extrasPrice;
 
   const submitHandler = async (formData: FormData) => {
-    if (paymentOption === "cache") {
-      await createBooking.bind(null, bookingData)(formData);
+    try {
+      if (paymentOption === "cache") {
+        await createBooking.bind(null, bookingData)(formData);
+        // return;
+        toast.success("Thank you for your reservation");
+      } else if (paymentOption === "card") {
+        let checkoutId = await createCheckoutSession(
+          image,
+          bookingData,
+          formData,
+        );
+        const stripe = (await stripePromise)!;
+        sessionStorage.setItem("paymentInitiated", "true");
+        const { error } = await stripe.redirectToCheckout({
+          sessionId: checkoutId,
+        });
+        if (error) {
+          sessionStorage.removeItem("paymentInitiated");
+          throw new Error("Error redirecting to Checkout");
+        }
+      } else throw new Error("Payment method not selected");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
       resetRange();
-      toast.success("Thank you for your reservation");
-    } else if (paymentOption === "card") {
-      let checkoutId = await createCheckoutSession(
-        image,
-        bookingData,
-        formData
-      );
-      const stripe = (await stripePromise)!;
-      sessionStorage.setItem("paymentInitiated", "true");
-      const { error } = await stripe.redirectToCheckout({
-        sessionId: checkoutId,
-      });
-      if (error) {
-        sessionStorage.removeItem("paymentInitiated");
-        throw new Error("Error redirecting to Checkout");
-      }
-    } else {
-      toast.error("Payment method not selected");
     }
   };
   return (
-    <div className="scale-[1.01] flex flex-col">
-      <div className="bg-primary-800 text-primary-300 px-16 py-2 flex justify-between items-center">
-        <p>Logged in as {user?.name}</p>
-      </div>
+    <div className="flex flex-col">
       <form
         action={submitHandler}
         // action={createBooking.bind(null, bookingData)}
-        className="bg-primary-900 pt-10 pb-7 flex-1 px-16 text-lg flex gap-5 flex-col"
+        className="flex flex-1 flex-col gap-5 bg-primary-900 px-16 pb-7 pt-10 text-lg"
       >
         <input type="text" hidden name="image" value={image} />
         <div className="space-y-2">
@@ -100,7 +102,7 @@ const ReservationForm: FC<Props> = ({ cabin, session: { user }, settings }) => {
           <select
             name="numGuests"
             id="numGuests"
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+            className="w-full rounded-sm bg-primary-200 px-5 py-3 text-primary-800 shadow-sm"
             required
             onChange={(e) => setNumGuest(parseInt(e.target.value))}
           >
@@ -122,7 +124,7 @@ const ReservationForm: FC<Props> = ({ cabin, session: { user }, settings }) => {
           <textarea
             name="observations"
             id="observations"
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+            className="w-full rounded-sm bg-primary-200 px-5 py-3 text-primary-800 shadow-sm"
             placeholder="Any pets, allergies, special requirements, etc.?"
           />
         </div>
@@ -132,7 +134,7 @@ const ReservationForm: FC<Props> = ({ cabin, session: { user }, settings }) => {
             {!!totalPrice && `${totalPrice} (${cabinPrice} + ${extrasPrice})`}
           </label>
           <input
-            className="w-4 aspect-square text-accent-600 bg-gray-100 border-2 border-gray-300 rounded-sm focus:ring-2 focus:ring-accent-500 focus:border-accent-500 checked:bg-accent-500  checked:ring-offset-2 transition duration-200 cursor-pointer"
+            className="aspect-square w-4 cursor-pointer rounded-sm border-2 border-gray-300 bg-gray-100 text-accent-600 transition duration-200 checked:bg-accent-500 checked:ring-offset-2 focus:border-accent-500 focus:ring-2 focus:ring-accent-500"
             type="checkbox"
             name="hasBreakfast"
             id="hasBreakfast"
@@ -148,7 +150,7 @@ const ReservationForm: FC<Props> = ({ cabin, session: { user }, settings }) => {
                   key={payment.paymentMethod}
                 >
                   <input
-                    className="w-4 aspect-square text-accent-600 bg-gray-100 border-2 border-gray-300  focus:ring-2 focus:ring-accent-500 focus:border-accent-500 checked:bg-accent-500  checked:ring-offset-2 transition duration-200 cursor-pointer "
+                    className="aspect-square w-4 cursor-pointer border-2 border-gray-300 bg-gray-100 text-accent-600 transition duration-200 checked:bg-accent-500 checked:ring-offset-2 focus:border-accent-500 focus:ring-2 focus:ring-accent-500"
                     type="radio"
                     name="payment"
                     value={payment.paymentMethod}
@@ -168,10 +170,10 @@ const ReservationForm: FC<Props> = ({ cabin, session: { user }, settings }) => {
           </div>
         </div>
 
-        <div className={`flex ${"justify-end"} items-center gap-6`}>
-          {isRanged && (
+        {isRanged && (
+          <div className={`flex flex-1 items-center justify-end gap-6`}>
             <>
-              <p className="text-primary-300 text-base">
+              <p className="text-base text-primary-300">
                 Start by selecting dates
               </p>
 
@@ -179,11 +181,11 @@ const ReservationForm: FC<Props> = ({ cabin, session: { user }, settings }) => {
                 Reserve now
               </SubmitButton>
             </>
-          )}
-        </div>
+          </div>
+        )}
       </form>
       {!isRanged && (
-        <p className="flex items-center justify-center font-bold space px-8 bg-primary-800 text-primary-300 h-[72px]">
+        <p className="space flex h-[72px] items-center justify-center bg-primary-800 px-8 font-bold text-primary-300">
           Fill the fields to complete your reservation.
         </p>
       )}

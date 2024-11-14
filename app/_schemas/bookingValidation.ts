@@ -1,9 +1,15 @@
 import { z } from "zod";
 
 // Define the Zod schema
+const isoDateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/;
+
 const bookingSchema = z.object({
-  startDate: z.date(),
-  endDate: z.date(),
+  startDate: z
+    .string()
+    .regex(isoDateRegex, "Invalid ISO 8601 format for startDate"),
+  endDate: z
+    .string()
+    .regex(isoDateRegex, "Invalid ISO 8601 format for endDate"),
   numNights: z.number().int().positive(),
   cabinPrice: z.number().positive(),
   cabinId: z.number().int().positive(),

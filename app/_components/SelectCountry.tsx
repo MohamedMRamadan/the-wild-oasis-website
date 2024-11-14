@@ -1,5 +1,6 @@
 import { getCountries } from "@/app/_lib/data-service";
 import React from "react";
+import { Country } from "../_types/data-service.type";
 
 // Let's imagine your colleague already built this component 😃
 
@@ -18,9 +19,7 @@ const SelectCountry: React.FC<Props> = async ({
 }) => {
   const countries = await getCountries();
   const flag =
-    countries.find(
-      (country: { name: string }) => country.name === defaultCountry
-    )?.flag ?? "";
+    countries.find((country) => country.name === defaultCountry)?.flag ?? "";
 
   return (
     <select
@@ -31,7 +30,7 @@ const SelectCountry: React.FC<Props> = async ({
       className={className}
     >
       <option value="">Select country...</option>
-      {countries.map((c: { name: string; flag: string }) => (
+      {countries.map((c: Country) => (
         <option key={c.name} value={`${c.name}%${c.flag}`}>
           {c.name}
         </option>

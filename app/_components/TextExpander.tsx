@@ -14,7 +14,7 @@ const TextExpander: FC<Props> = ({ children }) => {
     <span>
       {displayText}{" "}
       <button
-        className="text-primary-700 border-b border-primary-700 leading-3 pb-1"
+        className="border-b border-primary-700 pb-1 leading-3 text-primary-700 hover:border-primary-500 hover:text-primary-500"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         {isExpanded ? "Show less" : "Show more"}

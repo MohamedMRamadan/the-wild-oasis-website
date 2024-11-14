@@ -6,27 +6,25 @@ import { Guest } from "@/app/_types/data-service.type";
 import { Session } from "next-auth";
 import React from "react";
 
-type Props = {};
-
 export const metadata = {
   title: "Update Guest Profile",
   description:
     "Update your guest profile on The Wild Oasis, where you'll find affordable, family-friendly cabins for your next adventure.",
   image: "/og-image.png",
 };
-const page = async (props: Props) => {
-  const session = await auth()!;
+const page = async () => {
+  const session = (await auth()) as Session;
 
-  const user = (session as Session).user!;
-  const guest: Guest = await getGuest(user.email!);
+  const user = session.user;
+  const guest = await getGuest(user.email!);
 
   return (
     <div>
-      <h2 className="font-semibold text-2xl text-accent-400 mb-4">
+      <h2 className="mb-4 text-2xl font-semibold text-accent-400">
         Update your guest profile
       </h2>
 
-      <p className="text-lg mb-8 text-primary-200">
+      <p className="mb-8 text-lg text-primary-200">
         Providing the following information will make your check-in process
         faster and smoother. See you soon!
       </p>
@@ -34,7 +32,7 @@ const page = async (props: Props) => {
         <SelectCountry
           name="nationality"
           id="nationality"
-          className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+          className="w-full rounded-sm bg-primary-200 px-5 py-3 text-primary-800 shadow-sm"
           defaultCountry={guest.nationality}
         />
       </UpdateProfileForm>

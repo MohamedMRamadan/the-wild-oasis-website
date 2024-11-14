@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
-import { ExtendedSession } from "./../_types/auth.types";
 import { createGuest, getGuest } from "./data-service";
 
 export const {
@@ -11,7 +10,7 @@ export const {
 } = NextAuth({
   providers: [Google],
   callbacks: {
-    authorized: ({ auth, request }) => {
+    authorized: ({ auth }) => {
       return !!auth?.user;
     },
     // runs before actual signup happens
@@ -33,8 +32,8 @@ export const {
         return false;
       }
     },
-    // runs after signin callback, and also each time the session is checkedout
-    async session({ session }: { session: ExtendedSession }) {
+    // runs after signin callback, and also each time the session is being checked
+    async session({ session }) {
       if (session.user.email) {
         const guest = await getGuest(session.user.email);
         session.user.guestId = guest.id;
@@ -46,3 +45,20 @@ export const {
     signIn: "/login",
   },
 });
+
+// export const {
+//   handlers: { GET, POST },
+//   auth,
+//   signIn,
+//   signOut,
+// } = NextAuth({
+//   providers: [Google],
+//   callbacks: {
+//     authorized({ auth }) {
+//       return !!auth?.user;
+//     },
+//   },
+//   pages: {
+//     signIn: "/login",
+//   },
+// });

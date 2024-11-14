@@ -11,18 +11,18 @@ type Props = {
 const page: FC<Props> = async ({ params }) => {
   const { bookingId } = params;
   const { numGuests, observations, cabinId } = (await getBooking(
-    bookingId
+    bookingId,
   )) as Booking;
   const { maxCapacity } = await getCabin(cabinId);
   return (
     <div>
-      <h2 className="font-semibold text-2xl text-accent-400 mb-7">
+      <h2 className="mb-7 text-2xl font-semibold text-accent-400">
         Edit Reservation #{bookingId}
       </h2>
 
       <form
         action={updateBooking}
-        className="bg-primary-900 py-8 px-12 text-lg flex gap-6 flex-col"
+        className="flex flex-col gap-6 bg-primary-900 px-12 py-8 text-lg"
       >
         <input type="hidden" name="bookingId" value={bookingId} />
         <div className="space-y-2">
@@ -30,7 +30,7 @@ const page: FC<Props> = async ({ params }) => {
           <select
             name="numGuests"
             id="numGuests"
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+            className="w-full rounded-sm bg-primary-200 px-5 py-3 text-primary-800 shadow-sm"
             required
             defaultValue={numGuests}
           >
@@ -52,11 +52,11 @@ const page: FC<Props> = async ({ params }) => {
           <textarea
             name="observations"
             defaultValue={observations}
-            className="px-5 py-3 bg-primary-200 text-primary-800 w-full shadow-sm rounded-sm"
+            className="w-full rounded-sm bg-primary-200 px-5 py-3 text-primary-800 shadow-sm"
           />
         </div>
 
-        <div className="flex justify-end items-center gap-6">
+        <div className="flex items-center justify-end gap-6">
           <SubmitButton pendingContent="Updating...">
             Update reservation
           </SubmitButton>

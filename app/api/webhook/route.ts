@@ -1,3 +1,4 @@
+import { metadata } from "./../../login/page";
 // app/api/webhook/stripe/route.ts
 
 import supabase from "@/app/_lib/supabase";
@@ -18,15 +19,14 @@ const createPaidBooking = async (paymentIntent: any) => {
     extrasPrice: +paymentIntent.metadata.extrasPrice,
     cabinPrice: +paymentIntent.metadata.cabinPrice,
     numNights: +paymentIntent.metadata.numNights,
-    startDate: formatISO(
-      fromUnixTime(Number(paymentIntent.metadata.startDate))
-    ),
-    endDate: formatISO(fromUnixTime(Number(paymentIntent.metadata.endDate))),
+    startDate: paymentIntent.metadata.startDate,
+    endDate: paymentIntent.metadata.endDate,
     observations: "asdasd",
     isPaid: true,
     status: "confirmed",
     hasBreakfast: paymentIntent.metadata.hasBreakfast === "true" ? true : false,
   };
+  console.log(bookingData);
   const { error } = await supabase.from("bookings").insert([bookingData]);
   if (error) throw new Error("Booking could not be created");
 };
