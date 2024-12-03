@@ -1,6 +1,4 @@
 <div align="center">
-  <br/>
-  <br/>
   <img src="/public/logo.png" alt="logo" width="200" height="auto" />
   <h1>The Wild Oasis</h1>
   <br/>
