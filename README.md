@@ -1,10 +1,37 @@
-# Wild Oasis
-
-Next.js 14 application with App Router and Server Actions allowing users to book cabins at the Wild Oasis hotel.  
-Users can navigate different cabins, sign up with Google and create an account.  
-Logged-in users can securely book cabins using Stripe for payment.  
-Responsive-design, Tailwind.css.  
-Optimistic UI.
+<div align="center">
+  <br/>
+  <br/>
+  <img src="/public/logo.png" alt="logo" width="200" height="auto" />
+  <h1>The Wild Oasis</h1>
+  <br/>
+  <p>
+    Next.js 14 application with App Router and Server Actions allowing users to book cabins at the Wild Oasis hotel.  
+    Users can navigate different cabins, sign up with Google and create an account.  
+    Logged-in users can securely book cabins using Stripe for payment.  
+    Responsive-design, Tailwind.css.  
+    Optimistic UI.
+  </p>
+<p>
+  <a href="https://github.com/MohamedMRamadan/the-wild-oasis-website/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/MohamedMRamadan/the-wild-oasis-website" alt="contributors" />
+  </a>
+  <a href="">
+    <img src="https://img.shields.io/github/last-commit/MohamedMRamadan/the-wild-oasis-website" alt="last update" />
+  </a>
+  <a href="https://github.com/MohamedMRamadan/the-wild-oasis-website/network/members">
+    <img src="https://img.shields.io/github/forks/MohamedMRamadan/the-wild-oasis-website" alt="forks" />
+  </a>
+  <a href="https://github.com/MohamedMRamadan/the-wild-oasis-website/stargazers">
+    <img src="https://img.shields.io/github/stars/MohamedMRamadan/the-wild-oasis-website" alt="stars" />
+  </a>
+  <a href="https://github.com/MohamedMRamadan/the-wild-oasis-website/issues/">
+    <img src="https://img.shields.io/github/issues/MohamedMRamadan/the-wild-oasis-website" alt="open issues" />
+  </a>
+  <a href="https://github.com/MohamedMRamadan/the-wild-oasis-website/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/MohamedMRamadan/the-wild-oasis-website.svg" alt="license" />
+  </a>
+</p>
+</div>
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
